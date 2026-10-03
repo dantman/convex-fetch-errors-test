@@ -1,0 +1,64 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
+{
+	"name": "Node.js",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:5-24-trixie",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+			"packages": "xdg-utils,ripgrep"
+		}
+	},
+	"mounts": [
+		// Persist the pnpm-managed runtimes, globally installed bins, and the store they are
+		// linked from, so rebuilds don't re-download them. A project's own store is not here:
+		// pnpm keeps that on the workspace's filesystem, in node_modules/.pnpm-store.
+		{
+			"source": "${devcontainerId}-pnpm-home",
+			"target": "/home/node/.local/share/pnpm",
+			"type": "volume"
+		},
+		// Persist pnpm's metadata cache across rebuilds.
+		{
+			"source": "${devcontainerId}-pnpm-cache",
+			"target": "/home/node/.cache/pnpm",
+			"type": "volume"
+		},
+		// Persist the shell history the image keeps in this directory.
+		{
+			"source": "${devcontainerId}-bash-history",
+			"target": "/home/node/.local/state/bash",
+			"type": "volume"
+		},
+		// Persist the Convex user configuration across rebuilds.
+		{
+			"source": "${devcontainerId}-convex-config",
+			"target": "/home/node/.convex",
+			"type": "volume"
+		}
+	],
+	"remoteEnv": {
+		"HISTFILE": "/home/node/.local/state/bash/history",
+		"PNPM_HOME": "/home/node/.local/share/pnpm",
+		"PATH": "/home/node/.local/share/pnpm/bin:${containerEnv:PATH}"
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "./.devcontainer/postCreateCommand.sh",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mikestead.dotenv",
+				"EditorConfig.EditorConfig",
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"mhutchie.git-graph",
+				"mujichOk.vscode-project-name-in-statusbar",
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
+	}
+}
